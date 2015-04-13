@@ -1,24 +1,25 @@
-init();
+// Initialize global variables
+// Grid background color
+window.backgroundColor = "#000000";
+
+// Grid line color
+window.gridColor = "'#d3d3d3"
+
+// Number of cells in the horizontal rows
+window.numCellsX = 50;
+
+// Number of cells in the vertical rows
+window.numCellsY = 50;
+
+// Boolean tracking whether the game is paused or not
+window.playGame = true;
 
 // Set up and start the game
 function init() {
-    // Initialize global variables
-    window.numCellsX = 50;
-    window.numCellsY = 50;
-    window.playGame = true;
-
     // Draw the game board
     drawGrid();
 
-    // Redraw the grid when the window is resized
-    window.addEventListener("resize",
-        function() {
-            drawGrid();
-            drawCells();
-        }
-    );
-
-    // Initialize the grid
+    // Initialize the grid with dead/alive cells
     window.grid = [];
     for (var i = 0; i < numCellsX; i++) {
         grid[i] = [];
@@ -28,7 +29,18 @@ function init() {
         }
     }
 
+    // Draw the cells on the grid
     drawCells();
+
+    // Redraw the grid when the window is resized
+    window.addEventListener("resize",
+        function() {
+            drawGrid();
+            drawCells();
+        }
+    );
+
+
     //while(true) {
     //    if (window.playGame == true) {
     //
@@ -37,7 +49,7 @@ function init() {
 }
 
 /**
- * Resize the game board canvas to fill the viewport and draw a grid on the canvas.
+ * Size the game board canvas to fill the viewport and draw a grid on the canvas.
  */
 function drawGrid() {
     // Create a full screen canvas
@@ -56,13 +68,15 @@ function drawGrid() {
     // Get the size of cells on the grid
     var cellSize = getCellSize();
 
+    // Set the stroke color to grey
+    ctx.strokeStyle = '#d3d3d3';
+
     // Draw the vertical lines of the grid
     for (var i = 0; i <= numCellsX; i++) {
         var offset = i * cellSize;
         ctx.beginPath();
         ctx.moveTo(padding.horizontal + offset, padding.vertical);
         ctx.lineTo(padding.horizontal + offset, (canvas.height - padding.vertical));
-        ctx.strokeStyle = '#d3d3d3';
         ctx.stroke();
     }
 
@@ -72,7 +86,6 @@ function drawGrid() {
         ctx.beginPath();
         ctx.moveTo(padding.horizontal, padding.vertical + offset);
         ctx.lineTo((canvas.width - padding.horizontal), padding.vertical + offset);
-        ctx.strokeStyle = '#d3d3d3';
         ctx.stroke();
     }
 }
@@ -159,3 +172,5 @@ function onPlayPauseButtonPressed() {
         $("#playPauseButton").text("Pause");
     }
 }
+
+init();
