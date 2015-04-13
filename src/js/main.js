@@ -21,7 +21,7 @@ window.playGame = true;
 window.mouseDown = false;
 
 // Object tracking grid coordinates of the last cell clicked or touched by the user
-window.lastCellClicked = null
+window.lastCellClicked = null;
 
 // Set up and start the game
 function init() {
@@ -34,7 +34,7 @@ function init() {
         grid[i] = [];
         for (var j = 0; j < numCellsY; j++) {
             // Assign state to the cell
-            grid[i][j] = false;
+            grid[i][j] = false; //(Math.random() < 0.5);
         }
     }
 
@@ -55,11 +55,15 @@ function init() {
     canvas.addEventListener("mouseup", onCanvasMouseUp, false);
     canvas.addEventListener("mousemove", onCanvasMouseMove, false);
 
-    //while(true) {
-    //    if (window.playGame == true) {
-    //
-    //    }
-    //}
+    gameLoop()
+}
+
+function gameLoop() {
+    if (window.playGame) {
+        window.grid = getNextState();
+        drawCells();
+    }
+    setTimeout(function() { gameLoop(); }, 500);
 }
 
 /**
@@ -177,6 +181,47 @@ function getCellSize() {
 
     // Determine the size of the cells
     return Math.min(canvas.width/numCellsX, canvas.height/numCellsY);
+}
+
+/**
+ * @return {Array} array describing the next game state
+ */
+function getNextState() {
+    var newGrid = [];
+    for(var x = 0; x < numCellsX; x++) {
+        newGrid[x] = [];
+        for(var y = 0; y < numCellsY; y++) {
+            var count = countAliveNeighbors(x, y);
+            // Check if cell is created, survives, or dies
+            if (grid[x][y] && (count == 3 || count == 2)) {
+                // Cell survives
+                newGrid[x][y] = true;
+            } else if (!grid[x][y] && count == 3) {
+                // Cell is created
+                newGrid[x][y] = true;
+            } else {
+                // Cell dies
+                newGrid[x][y] = false;
+            }
+        }
+    }
+    return newGrid
+}
+
+/**
+ * @param x {Number} X grid coordinate of the cell
+ * @param y {Number} Y grid coordinate of the cell
+ * @return {Number} number of live neighbors
+ */
+function countAliveNeighbors(x, y) {
+    var rightX = (x + 1) % numCellsX;
+    var leftX = (x - 1) < 0 ? numCellsX - 1 : (x - 1);
+    var downY = (y + 1) % numCellsY;
+    var upY = (y - 1) < 0 ? numCellsY - 1 : (y - 1);
+
+    return grid[rightX][y] + grid[rightX][upY] + grid[rightX][downY] +
+            grid[leftX][y] + grid[leftX][upY] + grid[leftX][downY] +
+            grid[x][upY] + grid[x][downY];
 }
 
 /**
