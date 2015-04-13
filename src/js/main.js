@@ -17,6 +17,12 @@ window.numCellsY = 50;
 // Boolean tracking whether the game is paused or not
 window.playGame = true;
 
+// Boolean tracking whether the mouse is being held down
+window.mouseDown = false;
+
+// Object tracking grid coordinates of the last cell clicked or touched by the user
+window.lastCellClicked = null
+
 // Set up and start the game
 function init() {
     // Draw the game board
@@ -27,8 +33,8 @@ function init() {
     for (var i = 0; i < numCellsX; i++) {
         grid[i] = [];
         for (var j = 0; j < numCellsY; j++) {
-            // Assign random alive/dead to the cell
-            grid[i][j] = (Math.random() < 0.5);
+            // Assign state to the cell
+            grid[i][j] = false;
         }
     }
 
@@ -43,6 +49,11 @@ function init() {
         }
     );
 
+    // Add canvas event listener for mouse events
+    var canvas = document.getElementById("mainCanvas");
+    canvas.addEventListener("mousedown", onCanvasMouseDown, false);
+    canvas.addEventListener("mouseup", onCanvasMouseUp, false);
+    canvas.addEventListener("mousemove", onCanvasMouseMove, false);
 
     //while(true) {
     //    if (window.playGame == true) {
@@ -125,11 +136,44 @@ function drawCells() {
 }
 
 /**
- * @return {Number} The size of all cells in the grid
+ * Given pixel coordinates on the canvas switch that cell's alive/dead status and update lastCellClicked
+ * @param x {Number} the X value of the pixel coordinates on the canvas
+ * @param y {Number} the Y value of the pixel coordinates on the canvas
+ */
+function clickCell(x, y) {
+    // Check that the mouse is down
+    if (window.mouseDown) {
+        // Get the grid coordinates of the cell
+        var coords = getCellGridCoordinates(x, y);
+
+        // Return if the coordinates are not on the grid
+        if (coords == null) {
+            return null;
+        }
+
+        // Check that this is not the most recent cell clicked
+        if((lastCellClicked == null) || !(lastCellClicked.x == coords.x && lastCellClicked.y == coords.y)) {
+            // Switch the cell state
+            grid[coords.x][coords.y] = !grid[coords.x][coords.y];
+
+            // Update last cell clicked
+            window.lastCellClicked = coords;
+
+            // Update the screen
+            drawCells();
+        }
+    }
+}
+
+/**
+ * @return {Number} The size of all cells in the grid,
+ * @throws exception if the size is zero
  */
 function getCellSize() {
     // Get the canvas dimensions
     var canvas = document.getElementById("mainCanvas");
+
+    // TODO throw exception if the cell size is zero (handle it in the rest of the code)
 
     // Determine the size of the cells
     return Math.min(canvas.width/numCellsX, canvas.height/numCellsY);
@@ -138,7 +182,7 @@ function getCellSize() {
 /**
  * Return the vertical and horizontal padding for the grid in an object
  * @return {Object} with 'horizontal' and 'vertical' properties
-f */
+ */
 function getGridPadding() {
     // Get the canvas dimensions
     var canvas = document.getElementById("mainCanvas");
@@ -151,6 +195,36 @@ function getGridPadding() {
         horizontal: (canvas.width - (cellSize * numCellsX)) / 2,
         vertical: (canvas.height - (cellSize * numCellsY)) / 2
     };
+}
+
+/**
+ * Given pixel coordinates on the canvas return a cell's grid coordinates
+ * @param x {Number} the X value of the pixel coordinates on the canvas
+ * @param y {Number} the Y value of the pixel coordinates on the canvas
+ * @return {Object} the object containing grid coordinates of the cell with x, y properties. Returns null if the given
+ * coordinates are not on the grid.
+ */
+function getCellGridCoordinates(x, y) {
+    var canvas = document.getElementById("mainCanvas");
+    var padding = getGridPadding();
+    var cellSize = getCellSize();
+
+    // If the given coordinates are not on the grid then return null
+    if (x < padding.horizontal || y < padding.vertical ||
+        x > $(canvas.width - padding.horizontal) ||
+        y > $(canvas.height - padding.vertical)) {
+        return null;
+    }
+
+    // Subtract padding from the coordinates
+    x -= padding.horizontal;
+    y -= padding.vertical;
+
+    // Determine grid coordinates of the cell
+    x = Math.floor(x/cellSize);
+    y = Math.floor(y/cellSize);
+
+    return {x: x, y: y};
 }
 
 //############## Event Listeners ###############
@@ -173,6 +247,33 @@ function onPlayPauseButtonPressed() {
     } else {
         window.playGame = true;
         $("#playPauseButton").text("Pause");
+    }
+}
+
+/**
+ * Set the mouseDown variable to true and call the clickCell method
+ * @param event
+ */
+function onCanvasMouseDown(event) {
+    window.mouseDown = true;
+    clickCell(event.x, event.y);
+}
+
+/**
+ * Set the mouseDown variable to false and set the last cell clicked variable to null
+ */
+function onCanvasMouseUp() {
+    window.mouseDown = false;
+    window.lastCellClicked = null;
+}
+
+/**
+ * If the mouse is down then call the clickCell method
+ * @param event
+ */
+function onCanvasMouseMove(event) {
+    if (window.mouseDown) {
+        clickCell(event.x, event.y);
     }
 }
 
