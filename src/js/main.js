@@ -3,7 +3,10 @@
 window.backgroundColor = "#000000";
 
 // Grid line color
-window.gridColor = "'#d3d3d3"
+window.gridColor = "#d3d3d3";
+
+// Live cell color
+window.cellColor = "#ffff00";
 
 // Number of cells in the horizontal rows
 window.numCellsX = 50;
@@ -59,7 +62,7 @@ function drawGrid() {
 
     // Draw a black background
     var ctx = canvas.getContext("2d");
-    ctx.fillStyle = "#000000";
+    ctx.fillStyle = backgroundColor;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     // Get the padding for the grid
@@ -69,7 +72,7 @@ function drawGrid() {
     var cellSize = getCellSize();
 
     // Set the stroke color to grey
-    ctx.strokeStyle = '#d3d3d3';
+    ctx.strokeStyle = gridColor;
 
     // Draw the vertical lines of the grid
     for (var i = 0; i <= numCellsX; i++) {
@@ -109,10 +112,10 @@ function drawCells() {
         for (var j = 0; j < numCellsY; j++) {
             // Check if cell is alive or dead
             if (grid[i][j]) {
-                ctx.fillStyle = "#ffff00";
+                ctx.fillStyle = cellColor;
             } else {
-                // If cell is dead color with black
-                ctx.fillStyle = "#000000";
+                // If cell is dead color with background color
+                ctx.fillStyle = backgroundColor;
             }
 
             ctx.fillRect(padding.horizontal + (i * cellSize), padding.vertical + (j * cellSize),
@@ -135,7 +138,7 @@ function getCellSize() {
 /**
  * Return the vertical and horizontal padding for the grid in an object
  * @return {Object} with 'horizontal' and 'vertical' properties
- */
+f */
 function getGridPadding() {
     // Get the canvas dimensions
     var canvas = document.getElementById("mainCanvas");
