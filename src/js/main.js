@@ -1,3 +1,6 @@
+init();
+
+// Set up and start the game
 function init() {
     // Initialize global variables
     window.numCellsX = 50;
@@ -8,61 +11,145 @@ function init() {
     drawGrid();
 
     // Redraw the grid when the window is resized
-    window.addEventListener("resize", drawGrid);
+    window.addEventListener("resize",
+        function() {
+            drawGrid();
+            drawCells();
+        }
+    );
+
+    // Initialize the grid
+    window.grid = [];
+    for (var i = 0; i < numCellsX; i++) {
+        grid[i] = [];
+        for (var j = 0; j < numCellsY; j++) {
+            // Assign random alive/dead to the cell
+            grid[i][j] = (Math.random() < 0.5);
+        }
+    }
+
+    drawCells();
+    //while(true) {
+    //    if (window.playGame == true) {
+    //
+    //    }
+    //}
 }
 
 /**
- * Resize the game board canvas to fill the viewport and draw a grid in the canvas
+ * Resize the game board canvas to fill the viewport and draw a grid on the canvas.
  */
 function drawGrid() {
-    // Get size of the browser viewport minus the footer height
-    var windowHeight = $(window).height() - $("#footer").height();
-    var windowWidth = $(window).width();
-
     // Create a full screen canvas
     var canvas = document.getElementById("mainCanvas");
-    canvas.width = windowWidth;
-    canvas.height = windowHeight;
+    canvas.width = $(window).width();
+    canvas.height = $(window).height() - $("#footer").height();
 
     // Draw a black background
     var ctx = canvas.getContext("2d");
     ctx.fillStyle = "#000000";
-    ctx.fillRect(0,0,windowWidth,windowHeight);
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Determine the size of the cells
-    var numCellsX = window.numCellsX;
-    var numCellsY = window.numCellsY;
-    var cellSize = Math.min(windowWidth/numCellsX, windowHeight/numCellsY);
+    // Get the padding for the grid
+    var padding = getGridPadding();
 
-    // Determine the horizontal or vertical padding before the grid is drawn (one will be zero)
-    var horizontalPadding = (windowWidth - (cellSize * numCellsX)) / 2;
-    var verticalPadding = (windowHeight - (cellSize * numCellsY)) / 2;
+    // Get the size of cells on the grid
+    var cellSize = getCellSize();
 
     // Draw the vertical lines of the grid
-    var verticalLineYStart = verticalPadding;
-    var verticalLineYEnd = windowHeight - verticalPadding;
     for (var i = 0; i <= numCellsX; i++) {
         var offset = i * cellSize;
         ctx.beginPath();
-        ctx.moveTo(horizontalPadding + offset, verticalLineYStart);
-        ctx.lineTo(horizontalPadding + offset, verticalLineYEnd);
+        ctx.moveTo(padding.horizontal + offset, padding.vertical);
+        ctx.lineTo(padding.horizontal + offset, (canvas.height - padding.vertical));
         ctx.strokeStyle = '#d3d3d3';
         ctx.stroke();
     }
 
     // Draw the horizontal lines of the grid
-    var horizontalLineXStart = horizontalPadding;
-    var horizontalLineXEnd = windowWidth - horizontalPadding;
     for (i = 0; i <= numCellsY; i++) {
         offset = i * cellSize;
         ctx.beginPath();
-        ctx.moveTo(horizontalLineXStart, verticalPadding + offset);
-        ctx.lineTo(horizontalLineXEnd, verticalPadding + offset);
+        ctx.moveTo(padding.horizontal, padding.vertical + offset);
+        ctx.lineTo((canvas.width - padding.horizontal), padding.vertical + offset);
         ctx.strokeStyle = '#d3d3d3';
         ctx.stroke();
     }
 }
 
+/**
+ * Draw live cells onto the grid
+ */
+function drawCells() {
+    // Get canvas context
+    var canvas = document.getElementById("mainCanvas");
+    var ctx = canvas.getContext("2d");
+
+    // Get the grid padding
+    var padding = getGridPadding();
+
+    // Get the size of cells in the grid
+    var cellSize = getCellSize();
+
+    // Cycle through the grid
+    for (var i = 0; i < numCellsX; i++) {
+        for (var j = 0; j < numCellsY; j++) {
+            // Check if cell is alive or dead
+            if (grid[i][j]) {
+                ctx.fillStyle = "#ffff00";
+            } else {
+                // If cell is dead color with black
+                ctx.fillStyle = "#000000";
+            }
+
+            ctx.fillRect(padding.horizontal + (i * cellSize), padding.vertical + (j * cellSize),
+                cellSize, cellSize);
+        }
+    }
+}
+
+/**
+ * @return {Number} The size of all cells in the grid
+ */
+function getCellSize() {
+    // Get the canvas dimensions
+    var canvas = document.getElementById("mainCanvas");
+
+    // Determine the size of the cells
+    return Math.min(canvas.width/numCellsX, canvas.height/numCellsY);
+}
+
+/**
+ * Return the vertical and horizontal padding for the grid in an object
+ * @return {Object} with 'horizontal' and 'vertical' properties
+ */
+function getGridPadding() {
+    // Get the canvas dimensions
+    var canvas = document.getElementById("mainCanvas");
+
+    // Get the size of the cells
+    var cellSize = getCellSize();
+
+    // Determine the horizontal or vertical padding (one will be zero)
+    return {
+        horizontal: (canvas.width - (cellSize * numCellsX)) / 2,
+        vertical: (canvas.height - (cellSize * numCellsY)) / 2
+    };
+}
+
+//############## Event Listeners ###############
+
+/**
+ * Scale the number of cells in the grid according to the grid's current aspect ratio
+ * @param scaleFactor
+ */
+function onResizeGrid(scaleFactor) {
+    // TODO
+}
+
+/**
+ * Switch the application state from 'play' to 'pause'
+ */
 function onPlayPauseButtonPressed() {
     if (window.playGame == true) {
         window.playGame = false;
@@ -72,5 +159,3 @@ function onPlayPauseButtonPressed() {
         $("#playPauseButton").text("Pause");
     }
 }
-
-init();
