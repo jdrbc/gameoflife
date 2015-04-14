@@ -1,12 +1,12 @@
 // Initialize global variables
 // Grid background color
-window.backgroundColor = "#000000";
+window.backgroundColor = '#000000';
 
 // Grid line color
-window.gridColor = "#d3d3d3";
+window.gridColor = '#d3d3d3';
 
 // Live cell color
-window.cellColor = "#ffff00";
+window.cellColor = '#ffff00';
 
 // Number of cells in the horizontal rows
 window.numCellsX = 50;
@@ -23,6 +23,8 @@ window.mouseDown = false;
 // Object tracking grid coordinates of the last cell clicked or touched by the user
 window.lastCellClicked = null;
 
+
+init();
 // Set up and start the game
 function init() {
     // Draw the game board
@@ -30,11 +32,11 @@ function init() {
 
     // Initialize the grid with dead/alive cells
     window.grid = [];
-    for (var i = 0; i < numCellsX; i++) {
-        grid[i] = [];
-        for (var j = 0; j < numCellsY; j++) {
+    for (var i = 0; i < window.numCellsX; i++) {
+        window.grid[i] = [];
+        for (var j = 0; j < window.numCellsY; j++) {
             // Assign state to the cell
-            grid[i][j] = false; //(Math.random() < 0.5);
+            window.grid[i][j] = false;
         }
     }
 
@@ -42,7 +44,7 @@ function init() {
     drawCells();
 
     // Redraw the grid when the window is resized
-    window.addEventListener("resize",
+    window.addEventListener('resize',
         function() {
             drawGrid();
             drawCells();
@@ -50,12 +52,12 @@ function init() {
     );
 
     // Add canvas event listener for mouse events
-    var canvas = document.getElementById("mainCanvas");
-    canvas.addEventListener("mousedown", onCanvasMouseDown, false);
-    canvas.addEventListener("mouseup", onCanvasMouseUp, false);
-    canvas.addEventListener("mousemove", onCanvasMouseMove, false);
+    var canvas = document.getElementById('mainCanvas');
+    canvas.addEventListener('mousedown', onCanvasMouseDown, false);
+    canvas.addEventListener('mouseup', onCanvasMouseUp, false);
+    canvas.addEventListener('mousemove', onCanvasMouseMove, false);
 
-    gameLoop()
+    gameLoop();
 }
 
 function gameLoop() {
@@ -71,13 +73,13 @@ function gameLoop() {
  */
 function drawGrid() {
     // Create a full screen canvas
-    var canvas = document.getElementById("mainCanvas");
+    var canvas = document.getElementById('mainCanvas');
     canvas.width = $(window).width();
-    canvas.height = $(window).height() - $("#footer").height();
+    canvas.height = $(window).height() - $('#footer').height();
 
     // Draw a black background
-    var ctx = canvas.getContext("2d");
-    ctx.fillStyle = backgroundColor;
+    var ctx = canvas.getContext('2d');
+    ctx.fillStyle = window.backgroundColor;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     // Get the padding for the grid
@@ -87,11 +89,12 @@ function drawGrid() {
     var cellSize = getCellSize();
 
     // Set the stroke color to grey
-    ctx.strokeStyle = gridColor;
+    ctx.strokeStyle = window.gridColor;
 
     // Draw the vertical lines of the grid
-    for (var i = 0; i <= numCellsX; i++) {
-        var offset = i * cellSize;
+    var offset;
+    for (var i = 0; i <= window.numCellsX; i++) {
+        offset = i * cellSize;
         ctx.beginPath();
         ctx.moveTo(padding.horizontal + offset, padding.vertical);
         ctx.lineTo(padding.horizontal + offset, (canvas.height - padding.vertical));
@@ -99,7 +102,7 @@ function drawGrid() {
     }
 
     // Draw the horizontal lines of the grid
-    for (i = 0; i <= numCellsY; i++) {
+    for (i = 0; i <= window.numCellsY; i++) {
         offset = i * cellSize;
         ctx.beginPath();
         ctx.moveTo(padding.horizontal, padding.vertical + offset);
@@ -113,8 +116,8 @@ function drawGrid() {
  */
 function drawCells() {
     // Get canvas context
-    var canvas = document.getElementById("mainCanvas");
-    var ctx = canvas.getContext("2d");
+    var canvas = document.getElementById('mainCanvas');
+    var ctx = canvas.getContext('2d');
 
     // Get the grid padding
     var padding = getGridPadding();
@@ -123,14 +126,14 @@ function drawCells() {
     var cellSize = getCellSize();
 
     // Cycle through the grid
-    for (var i = 0; i < numCellsX; i++) {
-        for (var j = 0; j < numCellsY; j++) {
+    for (var i = 0; i < window.numCellsX; i++) {
+        for (var j = 0; j < window.numCellsY; j++) {
             // Check if cell is alive or dead
-            if (grid[i][j]) {
-                ctx.fillStyle = cellColor;
+            if (window.grid[i][j]) {
+                ctx.fillStyle = window.cellColor;
             } else {
                 // If cell is dead color with background color
-                ctx.fillStyle = backgroundColor;
+                ctx.fillStyle = window.backgroundColor;
             }
 
             ctx.fillRect(padding.horizontal + (i * cellSize), padding.vertical + (j * cellSize),
@@ -151,14 +154,15 @@ function clickCell(x, y) {
         var coords = getCellGridCoordinates(x, y);
 
         // Return if the coordinates are not on the grid
-        if (coords == null) {
+        if (coords === null) {
             return null;
         }
 
         // Check that this is not the most recent cell clicked
-        if((lastCellClicked == null) || !(lastCellClicked.x == coords.x && lastCellClicked.y == coords.y)) {
+        if ((window.lastCellClicked === null) ||
+            !(window.lastCellClicked.x === coords.x && window.lastCellClicked.y === coords.y)) {
             // Switch the cell state
-            grid[coords.x][coords.y] = !grid[coords.x][coords.y];
+            window.grid[coords.x][coords.y] = !window.grid[coords.x][coords.y];
 
             // Update last cell clicked
             window.lastCellClicked = coords;
@@ -175,12 +179,12 @@ function clickCell(x, y) {
  */
 function getCellSize() {
     // Get the canvas dimensions
-    var canvas = document.getElementById("mainCanvas");
+    var canvas = document.getElementById('mainCanvas');
 
     // TODO throw exception if the cell size is zero (handle it in the rest of the code)
 
     // Determine the size of the cells
-    return Math.min(canvas.width/numCellsX, canvas.height/numCellsY);
+    return Math.min(canvas.width / window.numCellsX, canvas.height / window.numCellsY);
 }
 
 /**
@@ -188,15 +192,15 @@ function getCellSize() {
  */
 function getNextState() {
     var newGrid = [];
-    for(var x = 0; x < numCellsX; x++) {
+    for (var x = 0; x < window.numCellsX; x++) {
         newGrid[x] = [];
-        for(var y = 0; y < numCellsY; y++) {
-            var count = countAliveNeighbors(x, y);
+        for (var y = 0; y < window.numCellsY; y++) {
+            var count = getAliveNeighborCount(x, y);
             // Check if cell is created, survives, or dies
-            if (grid[x][y] && (count == 3 || count == 2)) {
+            if (window.grid[x][y] && (count === 3 || count === 2)) {
                 // Cell survives
                 newGrid[x][y] = true;
-            } else if (!grid[x][y] && count == 3) {
+            } else if (!window.grid[x][y] && count === 3) {
                 // Cell is created
                 newGrid[x][y] = true;
             } else {
@@ -205,7 +209,7 @@ function getNextState() {
             }
         }
     }
-    return newGrid
+    return newGrid;
 }
 
 /**
@@ -213,15 +217,15 @@ function getNextState() {
  * @param y {Number} Y grid coordinate of the cell
  * @return {Number} number of live neighbors
  */
-function countAliveNeighbors(x, y) {
-    var rightX = (x + 1) % numCellsX;
-    var leftX = (x - 1) < 0 ? numCellsX - 1 : (x - 1);
-    var downY = (y + 1) % numCellsY;
-    var upY = (y - 1) < 0 ? numCellsY - 1 : (y - 1);
+function getAliveNeighborCount(x, y) {
+    var rightX = (x + 1) % window.numCellsX;
+    var leftX = (x - 1) < 0 ? window.numCellsX - 1 : (x - 1);
+    var downY = (y + 1) % window.numCellsY;
+    var upY = (y - 1) < 0 ? window.numCellsY - 1 : (y - 1);
 
-    return grid[rightX][y] + grid[rightX][upY] + grid[rightX][downY] +
-            grid[leftX][y] + grid[leftX][upY] + grid[leftX][downY] +
-            grid[x][upY] + grid[x][downY];
+    return window.grid[rightX][y] + window.grid[rightX][upY] + window.grid[rightX][downY] +
+            window.grid[leftX][y] + window.grid[leftX][upY] + window.grid[leftX][downY] +
+            window.grid[x][upY] + window.grid[x][downY];
 }
 
 /**
@@ -230,15 +234,15 @@ function countAliveNeighbors(x, y) {
  */
 function getGridPadding() {
     // Get the canvas dimensions
-    var canvas = document.getElementById("mainCanvas");
+    var canvas = document.getElementById('mainCanvas');
 
     // Get the size of the cells
     var cellSize = getCellSize();
 
     // Determine the horizontal or vertical padding (one will be zero)
     return {
-        horizontal: (canvas.width - (cellSize * numCellsX)) / 2,
-        vertical: (canvas.height - (cellSize * numCellsY)) / 2
+        horizontal: (canvas.width - (cellSize * window.numCellsX)) / 2,
+        vertical: (canvas.height - (cellSize * window.numCellsY)) / 2
     };
 }
 
@@ -250,7 +254,7 @@ function getGridPadding() {
  * coordinates are not on the grid.
  */
 function getCellGridCoordinates(x, y) {
-    var canvas = document.getElementById("mainCanvas");
+    var canvas = document.getElementById('mainCanvas');
     var padding = getGridPadding();
     var cellSize = getCellSize();
 
@@ -266,13 +270,13 @@ function getCellGridCoordinates(x, y) {
     y -= padding.vertical;
 
     // Determine grid coordinates of the cell
-    x = Math.floor(x/cellSize);
-    y = Math.floor(y/cellSize);
+    x = Math.floor(x / cellSize);
+    y = Math.floor(y / cellSize);
 
-    return {x: x, y: y};
+    return { x: x, y: y };
 }
 
-//############## Event Listeners ###############
+// ############## Event Listeners ###############
 
 /**
  * Scale the number of cells in the grid according to the grid's current aspect ratio
@@ -286,12 +290,12 @@ function onResizeGrid(scaleFactor) {
  * Switch the application state from 'play' to 'pause'
  */
 function onPlayPauseButtonPressed() {
-    if (window.playGame == true) {
+    if (window.playGame === true) {
         window.playGame = false;
-        $("#playPauseButton").text("Play");
+        $('#playPauseButton').text('Play');
     } else {
         window.playGame = true;
-        $("#playPauseButton").text("Pause");
+        $('#playPauseButton').text('Pause');
     }
 }
 
@@ -321,5 +325,3 @@ function onCanvasMouseMove(event) {
         clickCell(event.x, event.y);
     }
 }
-
-init();
