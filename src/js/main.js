@@ -300,6 +300,17 @@ function onPlayPauseButtonPressed() {
 }
 
 /**
+ * Clear the grid of live cells
+ */
+function onClearButtonPressed() {
+    for (var x = 0; x < window.numCellsX; x++) {
+        for (var y = 0; y < window.numCellsY; y++) {
+            window.grid[x][y] = false;
+        }
+    }
+}
+
+/**
  * Set the mouseDown variable to true and call the clickCell method
  * @param event
  */
