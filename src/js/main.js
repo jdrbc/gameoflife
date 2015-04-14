@@ -23,6 +23,11 @@ window.mouseDown = false;
 // Object tracking grid coordinates of the last cell clicked or touched by the user
 window.lastCellClicked = null;
 
+// Number reflecting how quickly the game moves through steps
+window.speed = 1;
+
+// Number reflecting the maximum speed the game will evolve at
+window.maxSpeed = 64;
 
 init();
 // Set up and start the game
@@ -65,7 +70,7 @@ function gameLoop() {
         window.grid = getNextState();
         drawCells();
     }
-    setTimeout(function() { gameLoop(); }, 500);
+    setTimeout(function() { gameLoop(); }, 1000 / window.speed);
 }
 
 /**
@@ -308,6 +313,15 @@ function onClearButtonPressed() {
             window.grid[x][y] = false;
         }
     }
+    drawCells();
+}
+
+/**
+ * Change the speed of the game
+ */
+function onSpeedButtonPressed() {
+    window.speed = window.speed * 2 > window.maxSpeed ? 1 : window.speed * 2;
+    $('#speedButton').text('X' + window.speed);
 }
 
 /**
