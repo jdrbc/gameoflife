@@ -19,7 +19,10 @@ window.numCellsX = 0;
 window.numCellsY = 0;
 
 // The size of the grid cells in pixels
-window.cellSize = 10;
+window.cellSize = 20;
+
+// The size of the grid lines relative to cell size
+window.gridLineWidthRatio = 10;
 
 // The minimum size of the grid cells in pixels
 window.minCellSize = 3;
@@ -80,6 +83,7 @@ function init() {
 function gameLoop() {
     if (window.playGame) {
         window.grid = getNextState();
+        drawGrid();
         drawCells();
     }
     setTimeout(function() { gameLoop(); }, 1000 / window.speed);
@@ -101,6 +105,9 @@ function drawGrid() {
 
     // Set the stroke color to grey
     ctx.strokeStyle = window.gridColor;
+
+    // Set the stroke size to 1/10th of the cell size
+    ctx.lineWidth = window.cellSize / window.gridLineWidthRatio;
 
     // Draw the vertical lines of the grid
     var offset;
@@ -145,8 +152,11 @@ function drawCells() {
                 ctx.fillStyle = window.backgroundColor;
             }
 
-            ctx.fillRect(padding.horizontal + (i * window.cellSize), padding.vertical + (j * window.cellSize),
-                window.cellSize, window.cellSize);
+            // Draw the cells
+            var halfGridLineWidth = (window.cellSize / window.gridLineWidthRatio) / 2;
+            ctx.fillRect(padding.horizontal + (i * window.cellSize) + halfGridLineWidth,
+                padding.vertical + (j * window.cellSize) + halfGridLineWidth,
+                window.cellSize - halfGridLineWidth, window.cellSize - halfGridLineWidth);
         }
     }
 }
@@ -177,6 +187,7 @@ function clickCell(x, y) {
             window.lastCellClicked = coords;
 
             // Update the screen
+            drawGrid();
             drawCells();
         }
     }
@@ -299,6 +310,7 @@ function onClearButtonPressed() {
             window.grid[x][y] = false;
         }
     }
+    drawGrid();
     drawCells();
 }
 
