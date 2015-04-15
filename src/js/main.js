@@ -54,9 +54,6 @@ function init() {
     window.numCellsX = Math.floor(canvas.width / window.cellSize);
     window.numCellsY = Math.floor(canvas.height / window.cellSize);
 
-    // Draw the game board
-    drawGrid();
-
     // Initialize the grid with dead/alive cells
     for (var i = 0; i < window.numCellsX; i++) {
         window.grid[i] = [];
@@ -66,8 +63,8 @@ function init() {
         }
     }
 
-    // Draw the cells on the grid
-    drawCells();
+    // Draw the game board
+    drawGrid();
 
     // Redraw the grid when the window is resized
     window.addEventListener('resize', onWindowResize);
@@ -84,7 +81,6 @@ function gameLoop() {
     if (window.playGame) {
         window.grid = getNextState();
         drawGrid();
-        drawCells();
     }
     setTimeout(function() { gameLoop(); }, 1000 / window.speed);
 }
@@ -127,6 +123,9 @@ function drawGrid() {
         ctx.lineTo((canvas.width - padding.horizontal), padding.vertical + offset);
         ctx.stroke();
     }
+
+    // Draw the cells on to the grid
+    drawCells();
 }
 
 /**
@@ -188,7 +187,6 @@ function clickCell(x, y) {
 
             // Update the screen
             drawGrid();
-            drawCells();
         }
     }
 }
@@ -311,7 +309,6 @@ function onClearButtonPressed() {
         }
     }
     drawGrid();
-    drawCells();
 }
 
 /**
@@ -362,5 +359,4 @@ function onWindowResize() {
     window.cellSize = Math.max(3, Math.min($(window).width() / window.numCellsX, $(window).height() / window.numCellsY));
 
     drawGrid();
-    drawCells();
 }
