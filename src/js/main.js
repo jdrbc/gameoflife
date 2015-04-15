@@ -39,8 +39,8 @@ window.speed = 1;
 // Number reflecting the maximum speed the game will evolve at
 window.maxSpeed = 64;
 
-init();
 // Set up and start the game
+$(window).load(init);
 function init() {
     // Create a full screen canvas
     var canvas = document.getElementById('mainCanvas');
