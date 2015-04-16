@@ -7,3 +7,5 @@ The game of life is a simple 2D cellular automaton. Cells are governed by three 
 * Any dead cell with three live neighbors becomes a live cell
 
 This web application that uses the HTML5 Boilerplate lets the user play the game of life on their browser.
+
+[Play the game!](http://www.jdr23bc.me/)
