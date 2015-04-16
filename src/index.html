@@ -12,8 +12,7 @@
 
         <link rel="stylesheet" href="css/normalize.css">
         <link rel="stylesheet" href="css/main.css">
-        <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.css">
-        <!-- TODO have local copy of jquery mobile css library-->
+        <link rel="stylesheet" href="css/jquery.mobile.min.css">
         <script src="js/vendor/modernizr-2.8.3.min.js"></script>
     </head>
     <body>
@@ -26,15 +25,15 @@
 
         <div id="footer" data-role="footer" data-position="fixed" data-fullscreen="true"
              data-tap-toggle="false" style="text-align: center;">
-            <a id="speedButton" onclick="onSpeedButtonPressed();" class="ui-btn">X1</a>
-            <a id="playPauseButton" onclick="onPlayPauseButtonPressed();" class="ui-btn">Pause</a>
-            <a id="clearButton" onclick="onClearButtonPressed();" class="ui-btn">Clear</a>
+            <a id="speedButton" class="ui-btn">X1</a>
+            <a id="playPauseButton" class="ui-btn">Pause</a>
+            <a id="clearButton" class="ui-btn">Clear</a>
         </div>
 
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
         <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.2.min.js"><\/script>')</script>
         <script src="http://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.js"></script>
-        <!-- TODO have local copy of jquery mobile library-->
+        <script>$.mobile || document.write('<script src="js/vendor/jquery.mobile.min.js"><\/script>')</script>
         <script src="js/plugins.js"></script>
         <script src="js/main.js"></script>
 

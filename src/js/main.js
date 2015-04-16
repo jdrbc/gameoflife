@@ -69,10 +69,18 @@ function init() {
     // Redraw the grid when the window is resized
     window.addEventListener('resize', onWindowResize);
 
-    // Add canvas event listener for mouse events
+    // Add canvas event listener for mouse/touch events
     canvas.addEventListener('mousedown', onCanvasMouseDown, false);
     canvas.addEventListener('mouseup', onCanvasMouseUp, false);
     canvas.addEventListener('mousemove', onCanvasMouseMove, false);
+    canvas.addEventListener('touchstart', onCanvasTouchStart, false);
+    canvas.addEventListener('touchmove', onCanvasTouchMove, false);
+    canvas.addEventListener('touchend', onCanvasTouchEnd, false);
+
+    // Add button event listeners
+    document.getElementById('speedButton').addEventListener('click', onSpeedButtonPressed, false);
+    document.getElementById('playPauseButton').addEventListener('click', onPlayPauseButtonPressed, false);
+    document.getElementById('clearButton').addEventListener('click', onClearButtonPressed, false);
 
     gameLoop();
 }
@@ -279,14 +287,6 @@ function getCellGridCoordinates(x, y) {
 // ############## Event Listeners ###############
 
 /**
- * Scale the number of cells in the grid according to the grid's current aspect ratio
- * @param scaleFactor
- */
-function onResizeGrid(scaleFactor) {
-    // TODO
-}
-
-/**
  * Switch the application state from 'play' to 'pause'
  */
 function onPlayPauseButtonPressed() {
@@ -344,6 +344,38 @@ function onCanvasMouseMove(event) {
     if (window.mouseDown) {
         clickCell(event.pageX, event.pageY);
     }
+}
+
+/**
+ * If the mouse is down then call the clickCell method
+ * @param event
+ */
+function onCanvasTouchMove(event) {
+    var touch = event.changedTouches[0];
+    if (window.mouseDown) {
+        clickCell(touch.pageX, touch.pageY);
+    }
+    event.preventDefault();
+}
+
+/**
+ * Set the mouseDown variable to true and call the clickCell method
+ * @param event
+ */
+function onCanvasTouchStart(event) {
+    window.mouseDown = true;
+    var touch = event.changedTouches[0];
+    clickCell(touch.pageX, touch.pageY);
+    event.preventDefault();
+}
+
+/**
+ * Set the mouseDown variable to false and set the last cell clicked variable to null
+ */
+function onCanvasTouchEnd() {
+    window.mouseDown = false;
+    window.lastCellClicked = null;
+    event.preventDefault();
 }
 
 /**
