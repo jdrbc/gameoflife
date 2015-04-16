@@ -57,12 +57,12 @@ function runTests() {
             checkString(path.resolve(dir, '.htaccess'), string, done);
         });
 
-        it('"index.html" should contain the correct jQuery version in the CDN URL', function (done) {
+        it('"gol.html" should contain the correct jQuery version in the CDN URL', function (done) {
             var string = 'ajax.googleapis.com/ajax/libs/jquery/' + pkg.devDependencies.jquery + '/jquery.min.js';
             checkString(path.resolve(dir, 'index.html'), string, done);
         });
 
-        it('"index.html" should contain the correct jQuery version in the local URL', function (done) {
+        it('"gol.html" should contain the correct jQuery version in the local URL', function (done) {
             var string = 'js/vendor/jquery-' + pkg.devDependencies.jquery + '.min.js';
             checkString(path.resolve(dir, 'index.html'), string, done);
         });
