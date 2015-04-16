@@ -42,6 +42,9 @@ window.speed = 1;
 // Number reflecting the maximum speed the game will evolve at
 window.maxSpeed = 64;
 
+// Symmetry switch for cell creation
+window.symmetry = true;
+
 // Set up and start the game
 $(window).load(init);
 function init() {
@@ -81,6 +84,7 @@ function init() {
     document.getElementById('speedButton').addEventListener('click', onSpeedButtonPressed, false);
     document.getElementById('playPauseButton').addEventListener('click', onPlayPauseButtonPressed, false);
     document.getElementById('clearButton').addEventListener('click', onClearButtonPressed, false);
+    document.getElementById('symmetryButton').addEventListener('click', onSymmetryButtonPressed, false);
 
     gameLoop();
 }
@@ -169,7 +173,8 @@ function drawCells() {
 }
 
 /**
- * Given pixel coordinates on the canvas switch that cell's alive/dead status and update lastCellClicked
+ * Given pixel coordinates on the canvas switch that cell's alive/dead status and update lastCellClicked, and if
+ * symmetry is enabled then do the same for the cell's partner
  * @param x {Number} the X value of the pixel coordinates on the canvas
  * @param y {Number} the Y value of the pixel coordinates on the canvas
  */
@@ -189,6 +194,11 @@ function clickCell(x, y) {
             !(window.lastCellClicked.x === coords.x && window.lastCellClicked.y === coords.y)) {
             // Switch the cell state
             window.grid[coords.x][coords.y] = !window.grid[coords.x][coords.y];
+
+            if (window.symmetry) {
+                var partnerX = window.numCellsX - 1 - coords.x;
+                window.grid[partnerX][coords.y] = window.grid[coords.x][coords.y];
+            }
 
             // Update last cell clicked
             window.lastCellClicked = coords;
@@ -391,4 +401,16 @@ function onWindowResize() {
     window.cellSize = Math.max(3, Math.min($(window).width() / window.numCellsX, $(window).height() / window.numCellsY));
 
     drawGrid();
+}
+
+/**
+ * Switch the symmetry flag and update the button text
+ */
+function onSymmetryButtonPressed() {
+    window.symmetry = !window.symmetry;
+    if (window.symmetry === true) {
+        $('#symmetryButton').text('S/S');
+    } else {
+        $('#symmetryButton').text('s/S');
+    }
 }
